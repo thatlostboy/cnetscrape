@@ -1,0 +1,27 @@
+<div id="home">
+  <div class="container">
+    <div class="row">
+      <div class="col-8 offset-2">
+        <h1>{{msg}}</h1>
+        <h2>Test Saved Page!</h2>
+        <hr>
+        <button class="btn btn-danger clearArticles">Clear Articles</button>
+        <hr>
+        <h3>Article List:</h3>
+        <ul id="example-list" class="list-group">
+          {{#each articles}}
+          <li data-id="{{this._id}}" class="list-group-item">
+            <a href="{{this.link}}">{{this.title}}</a>
+            <p>{{this.summary}}</p>
+            <button class="btn btn-primary btn-float-left addNotes">COMMENTS</button>
+            <button class="btn btn-danger float-right delete">DELETE FROM SAVED</button>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>

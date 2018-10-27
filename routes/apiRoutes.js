@@ -14,7 +14,7 @@ mongoose.connect("mongodb://localhost/cnetscrape", { useNewUrlParser: true });
 
 module.exports = function (app) {
 
-  // get all the lates new section from cnn and puts into mongodb
+  // scrapes and adds all
   app.get("/api/scrapeadd", function (req, res) {
     axios.get(baseURL).then(function (response) {
       let $ = cheerio.load(response.data);
@@ -73,7 +73,36 @@ module.exports = function (app) {
     })
   });
 
-  // get list of all saved articles from mongoDB
+
+    // scrape cnet for latest news and return results as list
+    app.get("/api/scrapeNotSaved", function (req, res) {
+      axios.get(baseURL).then(function (response) {
+        let $ = cheerio.load(response.data);
+  
+  
+        let articleList = []
+  
+        $("div.col-5 div.col-4").each(function (i, element) {
+          // parse from html
+          let headline = $(this).children("h3").text()
+          let summary = $(this).children("p").text()
+          let articleURL = $(this).children("h3").children("a").attr("href")
+          let articleInfo = {
+            title: headline,
+            summary: summary,
+            link: baseURL + articleURL
+          }
+          // put somec condition here to check if it's in the saved article
+          // to make sure not to add
+          //
+          //
+          articleList.push(articleInfo)
+        })
+        res.json(articleList)
+      })
+    });
+
+  // delete all articles
   app.get("/api/clear", function (req, res) {
     // Grab every document in the Articles collection
     db.Article.remove({})
@@ -113,8 +142,7 @@ module.exports = function (app) {
 
 
 
-
-  // save a specified article 
+  // save a specified article to Mongodb
   app.post("/api/articles", function (req, res) {
     // write to mongodb and prevent adding if already exists
     // https://stackoverflow.com/questions/24122981/how-to-stop-insertion-of-duplicate-documents-in-a-mongodb-collection
@@ -167,11 +195,10 @@ module.exports = function (app) {
             console.log("Notes deleted error?", err)
             res.json(err)
           })
-        res.json(notesList)
       })
-      .catch(function (result) {
-        console.log(result)
-        res.json(result)
+      .catch(function (err) {
+        console.log(err)
+        res.json(err)
       })
     
   })
