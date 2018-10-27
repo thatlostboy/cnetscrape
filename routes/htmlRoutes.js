@@ -7,7 +7,7 @@ module.exports = function(app) {
   });
 
   // Load example page and pass in an example by id
-  app.get("/example/:id", function(req, res) {
+  app.get("/article/:id", function(req, res) {
     res.render("example")
   });
 
