@@ -94,7 +94,7 @@ module.exports = function (app) {
       });
   });
   
-
+ 
 
   // get list of all saved articles from mongoDB
   app.get("/api/articles", function (req, res) {
@@ -110,8 +110,11 @@ module.exports = function (app) {
       });
   });
 
-  // save a specified article 
+  // delete a specific articles
 
+
+
+  // save a specified article 
   app.post("/api/articles", function (req, res) {
   // write to mongodb and prevent adding if already exists
   // https://stackoverflow.com/questions/24122981/how-to-stop-insertion-of-duplicate-documents-in-a-mongodb-collection
@@ -143,7 +146,18 @@ module.exports = function (app) {
       });
   });
 
-  // post to specific article, why isn't it sending everything?  
+  app.delete("/api/article/:id", function(req, res){
+    console.log("delete a single article")
+    // must delete all notes also
+  })
+
+  app.delete("/api/notes/:id", function(req, res){
+    console.log("delete a single note")
+    // must update the array in the notes field
+  })
+
+
+  // post a note to specific article, why isn't it sending everything?  
   app.post("/api/articles/:id", function (req, res) {
     // Create a new note and pass the req.body to the entry
     console.log("Body of response: ", req.body)
