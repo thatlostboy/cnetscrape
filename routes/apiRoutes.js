@@ -13,7 +13,7 @@ const baseURL = "http://www.cnet.com"
 mongoose.connect("mongodb://localhost/cnetscrape", { useNewUrlParser: true });
 
 module.exports = function (app) {
-  
+
   // get all the lates new section from cnn and puts into mongodb
   app.get("/api/scrapeadd", function (req, res) {
     axios.get(baseURL).then(function (response) {
@@ -47,7 +47,7 @@ module.exports = function (app) {
       res.send("Scrape is a Success!")
     })
   });
-  
+
 
   // scrape cnet for latest news and return results as list
   app.get("/api/scrape", function (req, res) {
@@ -80,10 +80,10 @@ module.exports = function (app) {
       .then(function (dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         db.Note.remove({})
-          .then(function(dbNote){
+          .then(function (dbNote) {
             res.json(dbArticle)
           })
-          .catch(function(err){
+          .catch(function (err) {
             res.json(err)
           })
         res.json(dbArticle);
@@ -93,8 +93,8 @@ module.exports = function (app) {
         res.json(err);
       });
   });
-  
- 
+
+
 
   // get list of all saved articles from mongoDB
   app.get("/api/articles", function (req, res) {
@@ -110,14 +110,14 @@ module.exports = function (app) {
       });
   });
 
-  // delete a specific articles
+
 
 
 
   // save a specified article 
   app.post("/api/articles", function (req, res) {
-  // write to mongodb and prevent adding if already exists
-  // https://stackoverflow.com/questions/24122981/how-to-stop-insertion-of-duplicate-documents-in-a-mongodb-collection
+    // write to mongodb and prevent adding if already exists
+    // https://stackoverflow.com/questions/24122981/how-to-stop-insertion-of-duplicate-documents-in-a-mongodb-collection
     articleInfo = req.body
     db.Article.update(articleInfo, articleInfo, { upsert: true })
       .then(function (dbArticle) {
@@ -146,13 +146,58 @@ module.exports = function (app) {
       });
   });
 
-  app.delete("/api/article/:id", function(req, res){
+  app.delete("/api/article/:id", function (req, res) {
     console.log("delete a single article")
-    // must delete all notes also
+    db.Article.findByIdAndRemove(req.params.id)
+      .then(function (result) {
+        console.log(result)
+        let notesList = result.note
+        console.log("note Objects to be deleted: ", notesList)
+        // must delete associated notes
+        db.Note.remove(
+          {
+            '_id':
+              { '$in': notesList }
+          })
+          .then(function(result){
+            console.log("Notes deleted?", result)
+            res.json(result)
+          })
+          .catch(function(err){
+            console.log("Notes deleted error?", err)
+            res.json(err)
+          })
+        res.json(notesList)
+      })
+      .catch(function (result) {
+        console.log(result)
+        res.json(result)
+      })
+    
   })
 
-  app.delete("/api/notes/:id", function(req, res){
-    console.log("delete a single note")
+  app.delete("/api/notes/:id", function (req, res) {
+    console.log("delete the note id from article first")
+    db.Article.update(
+      {},
+      { $pullAll: { note: [req.params.id] } },
+      { multi: true }
+    ).then(function (result) {
+      console.log(result, req.params.id)
+      console.log("Now delete the actual note")
+      db.Note.deleteOne({ _id: req.params.id })
+        .then(function (result2) {
+          console.log(result2)
+          res.json(result2)
+        })
+        .catch(function (result2) {
+          console.log(result2)
+          res.json(result2)
+        })
+
+    }).catch(function (error) {
+      res.json(error)
+    })
     // must update the array in the notes field
   })
 
@@ -167,7 +212,7 @@ module.exports = function (app) {
         // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
         // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
 
-        console.log("Did I make it here?!!")
+        console.log("Gonna Add in Stuff Now")
         // https://stackoverflow.com/questions/33049707/push-items-into-mongo-array-via-mongoose
         return db.Article.findOneAndUpdate(
           { _id: req.params.id },
