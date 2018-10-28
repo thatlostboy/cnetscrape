@@ -1,19 +1,3 @@
-$( document ).ready(function() {
-  console.log( "ready!" );
-
-  $.get("/api/scrapeNotSaved")
-    .then(function(data){
-      console.log(data)
-      if (data.length > 0) {
-        console.log("I have data!  Will call render function!")
-      } else {
-        console.log("I do not have data!  will call non render function!")
-      }
-    })
-});
-
-
-
 // Get references to page elements
 var $exampleText = $("#example-text");
 var $exampleDescription = $("#example-description");

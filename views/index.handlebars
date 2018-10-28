@@ -1,33 +1,55 @@
 <div id="home">
   <div class="container">
-    <div class="row">
-      <div class="col-8 offset-2">
-        <h1>{{msg}}</h1>
-        <h2>This is our Home Page!</h2>
-        <form class="clearfix mb-4" action="POST">
-          <div class="form-group">
-            <label for="example-text">Example Text</label>
-            <input type="text" id="example-text" class="form-control" aria-describedby="example-text" placeholder="Enter Example Text">
-          </div>
-          <div class="form-group">
-            <label for="example-description">Example Description</label>
-            <textarea class="form-control" id="example-description" aria-describedby="example-description" placeholder="Enter Example Description"></textarea>
-          </div>
-          <button id="submit" class="btn btn-primary float-right">Submit</button>
-        </form>
-        <h3>Examples:</h3>
-        <ul id="example-list" class="list-group">
-          {{#each articles}}
-          <li data-id="{{this._id}}" class="list-group-item">
-            <a href="{{this.link}}">{{this.title}}</a>
-            <button class="btn btn-danger float-right delete">ｘ</button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Mongo CNET Scraper</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
           </li>
-          {{/each}}
+          <li class="nav-item">
+            <a class="nav-link" href="/saved">Saved Articles</a>
+          </li>
         </ul>
       </div>
+      <button class="btn btn-success clearArticles">Scrape New</button>
+      <button class="btn btn-danger clearArticles">Clear Articles</button>
+    </nav>
+    <hr>
+    <hr>
+    <h2>Welcome to CNET Scraper</h2>
+    <h5>Soon, all website contents will be javascript. So this static scraping won't work anymore.. </h5>
+    <hr>
+
+    <hr>
+    <h3>New Article List:</h3>
+    <div id="articleList">
+      {{#each articles}}
+      <div class="card text-left">
+        <div class="card-header">
+          <h4><a href={{this.link}}>{{this.title}}</a></h4>
+        </div>
+        <div class="card-body">
+          <p class="card-title">{{this.summary}}</p>
+          <div class="text-right">
+            <button class="btn btn-success saveArticle" data-id={{this.id}}>ADD TO SAVED</button>
+          </div>
+        </div>
+      </div>
+      <hr>
+      {{/each}}
     </div>
   </div>
 </div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+  crossorigin="anonymous"></script>
 <script src="/js/index.js"></script>
