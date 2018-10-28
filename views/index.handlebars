@@ -17,7 +17,7 @@
           </li>
         </ul>
       </div>
-      <button class="btn btn-success clearArticles">Scrape New</button>
+      <button class="btn btn-success scrapeNewArticles">Scrape New</button>
       <button class="btn btn-danger clearArticles">Clear Articles</button>
     </nav>
     <hr>
@@ -29,20 +29,9 @@
     <hr>
     <h3>New Article List:</h3>
     <div id="articleList">
-      {{#each articles}}
-      <div class="card text-left">
-        <div class="card-header">
-          <h4><a href={{this.link}}>{{this.title}}</a></h4>
-        </div>
-        <div class="card-body">
-          <p class="card-title">{{this.summary}}</p>
-          <div class="text-right">
-            <button class="btn btn-success saveArticle" data-id={{this.id}}>ADD TO SAVED</button>
-          </div>
-        </div>
-      </div>
       <hr>
-      {{/each}}
+      <p>Loading Latest Articles... </p>  
+      <hr>
     </div>
   </div>
 </div>
