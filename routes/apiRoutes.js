@@ -74,33 +74,51 @@ module.exports = function (app) {
   });
 
 
-    // scrape cnet for latest news and return results as list
-    app.get("/api/scrapeNotSaved", function (req, res) {
-      axios.get(baseURL).then(function (response) {
-        let $ = cheerio.load(response.data);
-  
-  
-        let articleList = []
-  
-        $("div.col-5 div.col-4").each(function (i, element) {
-          // parse from html
-          let headline = $(this).children("h3").text()
-          let summary = $(this).children("p").text()
-          let articleURL = $(this).children("h3").children("a").attr("href")
-          let articleInfo = {
-            title: headline,
-            summary: summary,
-            link: baseURL + articleURL
-          }
-          // put somec condition here to check if it's in the saved article
-          // to make sure not to add
-          //
-          //
-          articleList.push(articleInfo)
-        })
-        res.json(articleList)
+  // scrape cnet for latest news, compare to what is in the database, and send out only difference
+  app.get("/api/scrapeNotSaved", function (req, res) {
+    axios.get(baseURL).then(function (response) {
+      let $ = cheerio.load(response.data);
+
+      let articleList = []
+      let savedList = []
+      let unsavedList = []
+
+      // scrape from newsite
+      $("div.col-5 div.col-4").each(function (i, element) {
+        // parse from html
+        let headline = $(this).children("h3").text()
+        let summary = $(this).children("p").text()
+        let articleURL = $(this).children("h3").children("a").attr("href")
+        let articleInfo = {
+          title: headline,
+          summary: summary,
+          link: baseURL + articleURL
+        }
+        articleList.push(articleInfo)
       })
-    });
+
+      // grab list of headers from DB
+      db.Article.find({})
+        .then(function (dbList) {
+          console.log("##############testing", dbList)
+          for (let i = 0; i < dbList.length; i++) {
+            savedList.push(dbList[i].title)
+          }
+          console.log(">>>>>>>>>>>>>", savedList, "<<<<<<<<<<<<<<<<")
+          //res.json(savedList)
+
+          // create unsavedList
+          for (let i = 0; i < articleList.length; i++) {
+            if (!savedList.includes(articleList[i].title)) {
+              unsavedList.push(articleList[i])
+            }
+          }
+          res.json(unsavedList)
+        })
+    })
+  });
+
+
 
   // delete all articles
   app.get("/api/clear", function (req, res) {
@@ -187,11 +205,11 @@ module.exports = function (app) {
             '_id':
               { '$in': notesList }
           })
-          .then(function(result){
+          .then(function (result) {
             console.log("Notes deleted?", result)
             res.json(result)
           })
-          .catch(function(err){
+          .catch(function (err) {
             console.log("Notes deleted error?", err)
             res.json(err)
           })
@@ -200,7 +218,7 @@ module.exports = function (app) {
         console.log(err)
         res.json(err)
       })
-    
+
   })
 
   app.delete("/api/notes/:id", function (req, res) {
