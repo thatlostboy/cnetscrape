@@ -1,51 +1,90 @@
 <div id="home">
   <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <a class="navbar-brand" href="#">Mongo CNET Scraper</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Mongo CNET Scraper</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="/">Home </a>
-              </li>
-              <li class="nav-item active">
-                <a class="nav-link" href="/saved">Saved Articles<span class="sr-only">(current)</span></a>
-              </li>
-            </ul>
-          </div>
-         
-          <button class="btn btn-danger clearArticles">Clear Articles</button>
-        </nav>
-        <hr><hr>
-        <h2>Test Saved Page!</h2>
-        <hr>
-        
-        <hr>
-        <h3>Article List:</h3>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home </a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/saved">Saved Articles<span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
 
-        {{#each articles}}
-        <div class="card text-left">
-          <div class="card-header">
-            <h4><a href={{this.link}}>{{this.title}}</a></h4>
-          </div>
-          <div class="card-body">
-            <p class="card-title">{{this.summary}}</p>
-            <div class="text-right">
-              <button class="btn btn-primary addNotes" data-id={{this.id}}>COMMENTS</button>
-              <button class="btn btn-danger delete" data-id={{this.id}}>DELETE FROM SAVED</button>
-            </div>
+      <button class="btn btn-danger clearArticles">Clear Articles</button>
+    </nav>
+    <hr>
+    <hr>
+    <h2>Test Saved Page!</h2>
+    <hr>
+
+    <hr>
+    <h3>Article List:</h3>
+
+    {{#each articles}}
+    <div id="card{{this.id}}">
+      <div class="card text-left">
+        <div class="card-header">
+          <h4><a href={{this.link}}>{{this.title}}</a></h4>
+        </div>
+        <div class="card-body">
+          <p class="card-title">{{this.summary}}</p>
+          <div class="text-right">
+            <button class="btn btn-primary viewNotes" data-id={{this.id}} data-toggle="modal" data-target="#modal{{this.id}}">VIEW/ADD
+              COMMENTS</button>
+            <button class="btn btn-danger deleteArticle" data-id={{this.id}}>DELETE FROM SAVED</button>
           </div>
         </div>
-        <hr>
-        {{/each}}
       </div>
+      <hr>
+    </div>
+    {{/each}}
+
+    {{#each articles}}
+    <!-- The Modal -->
+    <div class="modal" id="modal{{this.id}}">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title"><a href={{this.link}}>{{this.title}}</a></h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            {{#each this.note}}
+            <div class="card articleNote">
+              <div><button type="button" class="close delNote" id="note{{this._id}}">&times;</button></div>
+              <div class="card-body">{{this.body}}</div>
+            </div>
+            {{/each}}
+
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success saveNote">Save Note</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
 </div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+  crossorigin="anonymous"></script>
 <script src="/js/saved.js"></script>

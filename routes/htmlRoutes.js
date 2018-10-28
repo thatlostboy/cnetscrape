@@ -23,6 +23,7 @@ module.exports = function(app) {
   // Load saved page
   app.get("/saved", function(req, res) {
     db.Article.find({})
+    .populate("note")
     .then(function (dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
       res.render("saved", {articles: dbArticle })

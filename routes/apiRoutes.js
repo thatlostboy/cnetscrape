@@ -193,7 +193,7 @@ module.exports = function (app) {
   });
 
   app.delete("/api/article/:id", function (req, res) {
-    console.log("delete a single article")
+    console.log("delete a single article ", req.params.id)
     db.Article.findByIdAndRemove(req.params.id)
       .then(function (result) {
         console.log(result)

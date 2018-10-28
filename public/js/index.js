@@ -1,43 +1,77 @@
 $(document).ready(function () {
   console.log("ready!");
 
-  // scrape new Web Page at startup
+  // scrape new unsaved articles at startup
   getNewArticles()
 
-  // onclick handlers
+  /*
+  Below are the onclick handlers:
+      click button to clear mongodb and reload article
+      click button to scrape for new articles that is not already in mongodb
+      click button to save article to mongodb
+  */
+
   // get new articles
-  $(document).on("click",".scrapeNewArticles", function(){
+  $(document).on("click", ".scrapeNewArticles", function () {
     getNewArticles();
   })
 
-  // clear all articles on saved database
-  $(document).on("click",".clearArticles", function(){
-    alert("clear was clicked.  will call clear api then call scrape new articles function");
+  // clear all articles on 
+  $(document).on("click", ".clearArticles", function () {
+    $.get("/api/clear").then(function(){
+      // after successful function call.   Load new Articles
+      getNewArticles();
+    })
   })
 
-  // add new articles
-  $(document).on("click",".saveArticle", function(){
-    alert("saved was clicked.  will need to create save function");
+
+  // save article to mongodb
+  $(document).on("click", ".saveArticle", function () {
+
+    //disable button
+    $(this).attr("disabled", "disabled")
+
+
     //https://stackoverflow.com/questions/6647736/how-to-delete-parent-element-using-jquery
-    
-  })
+    let addObject = $(this).closest('.tagToSave')
 
+    //grab data and store in object for saving
+    let newObject = {}
+    newObject['title'] = $(addObject).find(".articleTitle").text()
+    newObject['link'] = $(addObject).find(".articleTitle").attr("href")
+    newObject['summary'] = $(addObject).find(".articleSummary").text()
+    console.log(newObject)
+
+
+    // store to mongoDB
+    $.post("/api/articles", newObject)
+      .then(function (result) {
+        console.log("Add successful!")
+        console.log(result)
+
+        // remove entry from screen
+        addObject.remove();
+      })
+
+  })
 
 });
 
 var articleTemplate = `
-<div class="card text-left tagToDelete">
+<div class="tagToSave">
+<div class="card text-left">
 <div class="card-header">
-  <h4><a href="{{link}}">{{title}}</a></h4>
+  <h4><a class="articleTitle" href="{{link}}">{{title}}</a></h4>
 </div>
 <div class="card-body">
-  <p class="card-title">{{summary}}</p>
+  <p class="card-title articleSummary">{{summary}}</p>
   <div class="text-right">
     <button class="btn btn-success saveArticle">ADD TO SAVED</button>
   </div>
 </div>
 </div>
 <hr>
+</div>
 `
 
 var noNewArticlesHTML = `
@@ -51,22 +85,28 @@ var processingArticlesHTML = `
 <p>Loading Latest Articles... </p>  
 <hr>`
 
+
+// scrape new article and then udpate HTML page 
 function getNewArticles() {
 
+  // update table to notify we are loading new items
   $("#articleList").html(processingArticlesHTML)
 
+  // scrape for new stories
   $.get("/api/scrapeNotSaved")
     .then(function (data) {
       console.log(data)
       if (data.length > 0) {
-        console.log("I have data!  Will call render function!")
+        console.log("I have data!  Will call update list function!")
         updateArticleList(data)
       } else {
-        console.log("I do not have data!  will call non render function!")
+        console.log("I do not have data!  will call no New articles function!")
+        noNewArticles()
       }
     })
 }
 
+// update HTML page with new artiles
 function updateArticleList(articleArray) {
   console.log("Listing!")
   let articleListHTML = ""
@@ -80,7 +120,7 @@ function updateArticleList(articleArray) {
     newArticle = newArticle.replace(/{{title}}/, article.title)
     newArticle = newArticle.replace(/{{link}}/, article.link)
     newArticle = newArticle.replace(/{{summary}}/, article.summary)
-    console.log(newArticle)
+    // console.log(newArticle)
 
     // append article to list
     articleListHTML += newArticle
@@ -90,108 +130,9 @@ function updateArticleList(articleArray) {
   $("#articleList").html(articleListHTML)
 }
 
+// update HTML page with default no new article
 function noNewArticles() {
   $("#articleList").html(noNewArticlesHTML)
 }
 
 
-
-// Get references to page elements
-var $exampleText = $("#example-text");
-var $exampleDescription = $("#example-description");
-var $submitBtn = $("#submit");
-var $exampleList = $("#example-list");
-
-// The API object contains methods for each kind of request we'll make
-var API = {
-  saveExample: function (example) {
-    return $.ajax({
-      headers: {
-        "Content-Type": "application/json"
-      },
-      type: "POST",
-      url: "api/examples",
-      data: JSON.stringify(example)
-    });
-  },
-  getExamples: function () {
-    return $.ajax({
-      url: "api/examples",
-      type: "GET"
-    });
-  },
-  deleteExample: function (id) {
-    return $.ajax({
-      url: "api/examples/" + id,
-      type: "DELETE"
-    });
-  }
-};
-
-// refreshExamples gets new examples from the db and repopulates the list
-var refreshExamples = function () {
-  API.getExamples().then(function (data) {
-    var $examples = data.map(function (example) {
-      var $a = $("<a>")
-        .text(example.text)
-        .attr("href", "/example/" + example.id);
-
-      var $li = $("<li>")
-        .attr({
-          class: "list-group-item",
-          "data-id": example.id
-        })
-        .append($a);
-
-      var $button = $("<button>")
-        .addClass("btn btn-danger float-right delete")
-        .text("ｘ");
-
-      $li.append($button);
-
-      return $li;
-    });
-
-    $exampleList.empty();
-    $exampleList.append($examples);
-  });
-};
-
-// handleFormSubmit is called whenever we submit a new example
-// Save the new example to the db and refresh the list
-var handleFormSubmit = function (event) {
-  event.preventDefault();
-
-  var example = {
-    text: $exampleText.val().trim(),
-    description: $exampleDescription.val().trim()
-  };
-
-  if (!(example.text && example.description)) {
-    alert("You must enter an example text and description!");
-    return;
-  }
-
-  API.saveExample(example).then(function () {
-    refreshExamples();
-  });
-
-  $exampleText.val("");
-  $exampleDescription.val("");
-};
-
-// handleDeleteBtnClick is called when an example's delete button is clicked
-// Remove the example from the db and refresh the list
-var handleDeleteBtnClick = function () {
-  var idToDelete = $(this)
-    .parent()
-    .attr("data-id");
-
-  API.deleteExample(idToDelete).then(function () {
-    refreshExamples();
-  });
-};
-
-// Add event listeners to the submit and delete buttons
-$submitBtn.on("click", handleFormSubmit);
-$exampleList.on("click", ".delete", handleDeleteBtnClick);
