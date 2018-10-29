@@ -9,8 +9,9 @@ const cheerio = require("cheerio");
 
 const baseURL = "http://www.cnet.com"
 
-// Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/cnetscrape", { useNewUrlParser: true });
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/cnetscrape";
+mongoose.connect(MONGODB_URI);
 
 module.exports = function (app) {
 
