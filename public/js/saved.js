@@ -4,10 +4,9 @@ $(document).ready(function () {
   Below are the onclick handlers:
       click button to clear mongodb 
       click button to delete article from mongodb
-      click button to activate modal
       click button to delete note in modal
       click button to add note in modal
-      click button to close modal
+      click button clear textarea box of modal
   */
 
   // clear articles from MongoDB handler
@@ -15,6 +14,13 @@ $(document).ready(function () {
     $.get("/api/clear").then(function () {
       location.reload();
     })
+  })
+
+  // clear contents of text box on click
+  $(document).on("click", ".viewNotes", function(){
+    let objectID = $(this).data("id")
+    let textareaTag = "#noteAdd"+objectID
+    $(textareaTag).val("")
   })
 
 

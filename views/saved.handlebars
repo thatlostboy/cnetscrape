@@ -22,11 +22,18 @@
     </nav>
     <hr>
     <hr>
-    <h2>Test Saved Page!</h2>
+    <h2>Welcome to CNET MongoDB Scraper: Saved Articles</h2>
+    <h5>Soon, all website contents will be javascript. So this static scraping won't work anymore.. </h5>
+    <ul>
+      <li> Click "Home" on the Nav Bar to see the newest articles scraped for CNET</li>
+      <li> Click "clear articles" to delete all saved articles and comments in mongodb</li>
+      <li> Click "View/Add comments" to delete or add comments</li>
+      <li> Click "delete from saved" to delete article and associated notes form mongodb</li>
+    </ul>
     <hr>
 
     <hr>
-    <h3>Article List:</h3>
+    <h3>Saved Article List:</h3>
 
     {{#each articles}}
     <div id="card{{this.id}}">
@@ -50,7 +57,7 @@
     {{#each articles}}
     <!-- The Modal -->
     <div class="modal" id="modal{{this.id}}">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
           <!-- Modal Header -->
@@ -63,18 +70,23 @@
           <div class="modal-body">
             {{#each this.note}}
             <div class="card articleNote" id="note{{this.id}}">
-              <div><button type="button" class="close delNote" data-id={{this._id}}>&times;</button></div>
-              <div class="card-body">{{this.body}}</div>
+
+              <div class="card-body">
+                <div><button type="button" class="close delNote" data-id={{this._id}}>&times;</button></div>{{this.body}}
+              </div>
             </div>
             {{/each}}
             <div class="card">
+
               <textarea name="message" rows="3" id="noteAdd{{this._id}}" placeholder="Enter Comment Here"></textarea>
+
             </div>
           </div>
 
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-success saveNote" data-id={{this._id}}>Save Note</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close Window</button>
+            <button type="button" class="btn btn-success saveNote" data-id={{this._id}}>Save Comments</button>
           </div>
 
         </div>
