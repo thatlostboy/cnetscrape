@@ -62,17 +62,19 @@
           <!-- Modal body -->
           <div class="modal-body">
             {{#each this.note}}
-            <div class="card articleNote">
-              <div><button type="button" class="close delNote" id="note{{this._id}}">&times;</button></div>
+            <div class="card articleNote" id="note{{this.id}}">
+              <div><button type="button" class="close delNote" data-id={{this._id}}>&times;</button></div>
               <div class="card-body">{{this.body}}</div>
             </div>
             {{/each}}
-
+            <div class="card">
+              <textarea name="message" rows="3" id="noteAdd{{this._id}}" placeholder="Enter Comment Here"></textarea>
+            </div>
           </div>
 
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-success saveNote">Save Note</button>
+            <button type="button" class="btn btn-success saveNote" data-id={{this._id}}>Save Note</button>
           </div>
 
         </div>
