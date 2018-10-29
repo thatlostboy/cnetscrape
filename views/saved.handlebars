@@ -44,9 +44,9 @@
         <div class="card-body">
           <p class="card-title">{{this.summary}}</p>
           <div class="text-right">
+            <button class="btn btn-danger deleteArticle" data-id={{this.id}}>DELETE FROM SAVED</button>
             <button class="btn btn-primary viewNotes" data-id={{this.id}} data-toggle="modal" data-target="#modal{{this.id}}">VIEW/ADD
               COMMENTS</button>
-            <button class="btn btn-danger deleteArticle" data-id={{this.id}}>DELETE FROM SAVED</button>
           </div>
         </div>
       </div>
@@ -85,8 +85,8 @@
 
           <!-- Modal footer -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close Window</button>
             <button type="button" class="btn btn-success saveNote" data-id={{this._id}}>Save Comments</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close Window</button>
           </div>
 
         </div>
